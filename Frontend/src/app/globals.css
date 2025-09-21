@@ -1,0 +1,134 @@
+/* ---- Theme ---- */
+:root{
+  --bg:#0b0c10;
+  --card:#15171c;
+  --ink:#e8eaed;
+  --muted:#a1a7b3;
+  --line:rgba(255,255,255,.08);
+  --line-strong:rgba(255,255,255,.12);
+  --brand:#7c9cff;
+  --brand-ink:#0b0c10;
+  --accent:#12d579;
+  --danger:#ff6b6b;
+  --focus:#9fb2ff;
+}
+
+/* ---- Base ---- */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+a{color:inherit;text-decoration:none}
+img,svg{display:block;max-width:100%}
+button,input,select,textarea{font:inherit}
+
+/* ---- Layout ---- */
+.container{max-width:1000px;margin:0 auto;padding:24px}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:20px;
+}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width: 720px){
+  .grid{grid-template-columns:1fr}
+  .container{padding:16px}
+}
+
+/* ---- Typography ---- */
+.h1{font-size:28px;margin:0 0 6px}
+.p{color:var(--muted);margin:0 0 16px}
+.small{color:var(--muted);font-size:12px}
+.kbd{
+  font-family:ui-monospace,Menlo,Monaco,Consolas,monospace;
+  color:#9fb2ff;
+  background:rgba(124,156,255,.08);
+  padding:.1rem .35rem;
+  border-radius:6px;
+}
+.badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:999px;
+  background:rgba(124,156,255,.15);
+  color:#bfcaff;
+  font-size:12px;
+}
+
+/* ---- Nav ---- */
+.nav{
+  display:flex;gap:12px;align-items:center;justify-content:space-between;
+  margin:12px auto 0;max-width:1000px;padding:12px 24px;
+}
+.nav a{
+  padding:8px 12px;border-radius:12px;border:1px solid transparent;
+}
+.nav a:hover{background:rgba(255,255,255,.06)}
+.nav a.active{background:rgba(255,255,255,.08);border-color:var(--line-strong)}
+
+/* ---- Forms ---- */
+label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}
+input,select,textarea{
+  width:100%;
+  background:#0f1115;
+  border:1px solid var(--line);
+  color:var(--ink);
+  padding:10px 12px;border-radius:10px;
+  outline:none; transition:border-color .15s, box-shadow .15s, background .15s;
+}
+input::placeholder,textarea::placeholder{color:#8b90a0}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--focus);
+  box-shadow:0 0 0 3px rgba(159,178,255,.15);
+  background:#0e1014;
+}
+
+.btnrow{display:flex;gap:12px;justify-content:flex-end;margin-top:14px}
+button{
+  background:var(--brand);
+  color:var(--brand-ink);
+  border:none; padding:10px 14px; border-radius:12px;
+  font-weight:600; cursor:pointer;
+  transition:transform .05s ease, filter .15s ease, opacity .15s ease;
+}
+button:hover{filter:brightness(1.05)}
+button:active{transform:translateY(1px)}
+button:disabled{opacity:.6;cursor:not-allowed}
+button.ghost{
+  background:transparent;color:var(--ink);
+  border:1px solid var(--line-strong);
+}
+
+/* ---- Tables ---- */
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{
+  border-bottom:1px solid var(--line);
+  padding:10px 8px;text-align:left;vertical-align:top;
+}
+.table th{color:var(--muted);font-weight:600;background:rgba(255,255,255,.03)}
+
+/* ---- Dividers ---- */
+hr{border:none;border-top:1px solid var(--line);margin:16px 0}
+
+/* ---- Helpers ---- */
+.center{display:flex;align-items:center;justify-content:center}
+.right{display:flex;justify-content:flex-end}
+.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:1rem}
+.mb-1{margin-bottom:.25rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:1rem}
+
+/* ---- Recharts tweaks (optional) ---- */
+.recharts-wrapper text{fill:var(--muted)}
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line{stroke:var(--line)}
+.recharts-tooltip-wrapper .recharts-default-tooltip{
+  background:#0f1115 !important;
+  border:1px solid var(--line-strong) !important;
+  color:var(--ink) !important;
+}
