@@ -69,6 +69,8 @@ class Load(BaseModel):
     notes: Optional[str] = None
     weight: Optional[int] = None
     commodity_type: Optional[str] = None
+    num_of_pieces: Optional[int] = None
+    dimensions: Optional[str] = None
 
 @app.post("/loads", response_model=Load, status_code=201)
 def create_load(ld: Load):
@@ -78,11 +80,13 @@ def create_load(ld: Load):
             cur.execute("""
                 INSERT INTO loads (
                     load_id, origin, destination, pickup_datetime, delivery_datetime,
-                    equipment_type, loadboard_rate, miles, notes, weight, commodity_type
-                ) VALUES (?,?,?,?,?,?,?,?,?,?,?)
+                    equipment_type, loadboard_rate, miles, notes, weight, commodity_type,
+                    num_of_pieces, dimensions
+                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
             """, (
                 ld.load_id, ld.origin, ld.destination, ld.pickup_datetime, ld.delivery_datetime,
-                ld.equipment_type, ld.loadboard_rate, ld.miles, ld.notes, ld.weight, ld.commodity_type
+                ld.equipment_type, ld.loadboard_rate, ld.miles, ld.notes, ld.weight, ld.commodity_type,
+                ld.num_of_pieces, ld.dimensions
             ))
             conn.commit()
         except IntegrityError:
@@ -97,6 +101,9 @@ def search_loads(
     equipment: Optional[str] = Query(None, description="Filter by equipment_type"),
     min_rate: Optional[int] = Query(None, ge=0, description="Minimum loadboard_rate"),
     max_rate: Optional[int] = Query(None, ge=0, description="Maximum loadboard_rate"),
+    pickup_earliest: Optional[str] = Query(None, description="Earliest pickup time (ISO8601)"),
+    pickup_latest: Optional[str] = Query(None, description="Latest pickup time (ISO8601)"),
+    origin_radius_miles: Optional[int] = Query(None, ge=1, le=1000, description="Search radius around origin in miles"),
     limit: int = Query(10, ge=1, le=100)
 ):
     sql = "SELECT * FROM loads WHERE 1=1"
@@ -136,6 +143,24 @@ def get_load(load_id: str):
         if not row:
             raise HTTPException(status_code=404, detail="Load not found")
         return row
+
+@app.post("/events/call-summary")
+def log_call_summary(ev: CallEvent):
+    with get_conn() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+          INSERT INTO call_events (
+            ts, mc_number, legal_name, verified, load_id, origin, destination,
+            pickup_datetime, delivery_datetime, loadboard_rate, agreed_price,
+            negotiation_rounds, outcome, sentiment
+          ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        """, (
+            ev.ts, ev.mc_number, ev.legal_name, int(ev.verified) if ev.verified is not None else None,
+            ev.load_id, ev.origin, ev.destination, ev.pickup_datetime, ev.delivery_datetime,
+            ev.loadboard_rate, ev.agreed_price, ev.negotiation_rounds, ev.outcome, ev.sentiment
+        ))
+        conn.commit()
+    return JSONResponse({"ok": True})
 
 # ---------- Metrics Logging ----------
 
